@@ -1,0 +1,238 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #120907;
+  color: #c8c8d4;
+  font-family: 'Courier New', monospace;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0b0b18; }
+::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 2px; }
+
+textarea:focus { outline: none; }
+button:hover { opacity: 0.85; }
+button:active { transform: scale(0.97); }
+
+/* Telemetry HUD styles */
+.telemetry-hud {
+  background: linear-gradient(180deg, rgba(12,12,24,0.9), rgba(6,6,12,0.95));
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 8px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(2,2,8,0.6);
+}
+
+.telemetry-header {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+.telemetry-left { display: flex; align-items: center; gap: 10px; }
+.telemetry-indicator { width: 9px; height: 9px; border-radius: 50%; background: #00ff88; animation: hud-blink 1.4s infinite; box-shadow: 0 0 8px rgba(0,255,136,0.12); }
+.telemetry-title { font-size: 0.72rem; letter-spacing: 2px; color: #9aa0b2; }
+.telemetry-meta { font-size: 0.72rem; color: #7b7f92; }
+
+.telemetry-log { flex: 1; overflow: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+.telemetry-entry { display: flex; gap: 10px; align-items: flex-start; font-family: 'Courier New', monospace; font-size: 0.78rem; color: #b8bac8; }
+.telemetry-entry .entry-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; background: #555; box-shadow: none; }
+.telemetry-entry .entry-text { white-space: pre-wrap; word-break: break-word; color: inherit; }
+
+.telemetry-entry.error { color: #ffb4b4; }
+.telemetry-entry.error .entry-dot { background: #ff4444; box-shadow: 0 0 8px rgba(255,68,68,0.12); }
+.telemetry-entry.success { color: #9fffd6; }
+.telemetry-entry.success .entry-dot { background: #00ff88; box-shadow: 0 0 8px rgba(0,255,136,0.08); }
+.telemetry-entry.normal { color: #a6a8b6; }
+
+/* Scrollbar for telemetry log */
+.telemetry-log::-webkit-scrollbar { width: 8px; }
+.telemetry-log::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.04); border-radius: 6px; }
+
+@keyframes hud-blink { 0%,100%{opacity:1}50%{opacity:0.25} }
+
+/* telemetry entry animation */
+.telemetry-entry { transform-origin: left center; animation: entry-in 360ms cubic-bezier(.2,.8,.2,1); }
+@keyframes entry-in { from { opacity: 0; transform: translateY(6px) scale(0.995) } to { opacity: 1; transform: translateY(0) scale(1) } }
+
+/* Grid cell hover and focus */
+.grid-cell { transition: transform 160ms ease, box-shadow 160ms ease, background-color 180ms ease }
+.grid-cell:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 6px 18px rgba(2,2,8,0.35) }
+.grid-cell:focus { outline: none; box-shadow: 0 0 0 3px rgba(0,255,136,0.06) }
+
+/* Buttons hover and focus */
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(0,0,0,0.45) }
+.btn:focus-visible { outline: 2px solid rgba(0,255,136,0.14); outline-offset: 2px }
+
+.mission-console:focus-visible { outline: 2px solid rgba(0,255,136,0.12); outline-offset: 2px }
+
+/* Rover transitions */
+.grid-rover { transition: left 360ms cubic-bezier(.2,.9,.3,1), top 360ms cubic-bezier(.2,.9,.3,1), transform 220ms ease }
+
+/* App layout and background */
+.app-root {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 10, 0.88) 0%, rgba(8, 5, 4, 0.62) 43%, rgba(31, 13, 5, 0.36) 100%),
+    linear-gradient(180deg, rgba(5, 5, 10, 0.32) 0%, rgba(8, 4, 2, 0.72) 100%),
+    url('/assets/mars-rover-background.jpeg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  padding: 0 18px 18px 18px;
+  color: #c8c8d4;
+  font-family: 'Courier New', monospace;
+}
+
+.top-nav {
+  background: linear-gradient(180deg, rgba(16,12,12,0.72), rgba(8,8,16,0.86));
+  border: 1px solid rgba(255, 214, 170, 0.1);
+  border-top: 0;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+}
+.top-left { display:flex; align-items:center; gap:12px; }
+.status-dot { width:10px; height:10px; border-radius:50%; background:#555; }
+.status-dot.running { background:#00ff88; box-shadow:0 0 12px rgba(0,255,136,0.12); }
+.status-dot.crashed { background:#ff4444; box-shadow:0 0 12px rgba(255,68,68,0.12); }
+.status-dot.running { animation: status-pulse 1.2s infinite; }
+.brand { color:#bfffdc; letter-spacing:4px; font-weight:700; }
+.top-right { display:flex; gap:18px; color:#c9c9d6; font-size:0.85rem; opacity:0.9 }
+.top-right .sep { color: rgba(200,200,220,0.12); margin: 0 6px }
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 520px 1fr;
+  gap: 20px;
+  height: calc(100vh - 120px);
+  margin-top: 16px;
+}
+
+.left-panel {
+  border: 1px solid rgba(255, 214, 170, 0.11);
+  padding: 22px;
+  display:flex; flex-direction:column; gap:12px;
+  background: linear-gradient(180deg, rgba(12,10,12,0.76), rgba(8,7,10,0.62));
+  border-radius: 8px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
+}
+
+/* Control strip and buttons */
+.control-strip { display:flex; gap:10px }
+.btn { font-family: 'Courier New', monospace; font-size:0.85rem; font-weight:700; letter-spacing:2px; cursor:pointer; padding:10px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); transition: transform 0.12s ease, box-shadow 0.12s ease }
+.btn:active { transform: translateY(1px) }
+.btn.primary { flex:1; background: linear-gradient(180deg, rgba(6,20,14,0.6), rgba(4,12,10,0.6)); color:#00ff88; border-color: rgba(0,255,136,0.18) }
+.btn.primary.running { background: linear-gradient(180deg, rgba(4,12,6,0.85), rgba(2,6,6,0.9)); color:#ffaa00; border-color: rgba(255,170,0,0.28); box-shadow: 0 6px 20px rgba(0,255,136,0.06) }
+.btn.danger { background: linear-gradient(180deg, rgba(26,6,6,0.6), rgba(18,6,6,0.6)); color:#ff6b6b; border-color: rgba(255,80,80,0.12) }
+
+/* Mission console textarea */
+.mission-console { background:rgba(7,7,19,0.86); color:#bfffdc; border:1px solid rgba(255,214,170,0.1); font-family:'Courier New', monospace; font-size:0.9rem; padding:14px 16px; resize:none; line-height:1.8; letter-spacing:1px; width:100%; border-radius:8px; box-shadow: inset 0 0 28px rgba(0,0,0,0.22) }
+
+/* Terrain grid styles */
+.terrain-wrap { position: relative; width:100%; max-width:500px; border:2px solid rgba(255,214,170,0.13); border-radius:6px; overflow:hidden; box-shadow: 0 18px 50px rgba(0,0,0,0.36) }
+.terrain-grid { display:grid; width:100%; }
+.grid-cell { width:100%; aspect-ratio:1; border:1px solid rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#333; background:#151525 }
+.grid-cell.path { background:#2d2d5e; animation: trailFade 0.45s ease }
+.grid-cell.obstacle { background:#5a1a1a; color:#ff7b7b }
+.grid-rover { position:absolute; display:flex; align-items:center; justify-content:center; border-radius:4px; z-index:12 }
+.grid-rover.crashed { animation: pulse 0.3s infinite alternate }
+
+@keyframes trailFade { from { background-color: #151525 } to { background-color: #2d2d5e } }
+@keyframes pulse { from { background-color: #ff000099 } to { background-color: #ff0000ff } }
+
+.coord-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:6px }
+.coord-card { background: rgba(12,12,20,0.76); border:1px solid rgba(255,214,170,0.1); padding:10px 14px; text-align:center; border-radius:6px }
+.coord-label { font-size:0.65rem; color:#9aa0b2; letter-spacing:2px; margin-bottom:6px }
+.coord-value { font-size:0.95rem; color:#00ff88; font-weight:700 }
+
+.right-panel { padding:22px; display:flex; flex-direction:column; gap:18px; background: linear-gradient(180deg, rgba(12,10,12,0.66), rgba(8,7,10,0.5)); border: 1px solid rgba(255,214,170,0.09); border-radius: 8px; box-shadow: 0 22px 70px rgba(0,0,0,0.26) }
+.battery-block { }
+.battery-row { display:flex; justify-content:space-between; margin-bottom:8px }
+.battery-label { font-size:0.7rem; letter-spacing:2px; color:#9aa0b2 }
+.battery-value { font-weight:700 }
+.battery-track { background: rgba(12,12,20,0.76); height:8px; border-radius:6px; border:1px solid rgba(255,214,170,0.1); overflow:hidden }
+.battery-level { height:100%; border-radius:6px; transition: width 0.4s ease }
+
+.command-ref { background: rgba(12,12,20,0.76); border:1px solid rgba(255,214,170,0.1); padding:14px; font-size:0.9rem; border-radius:8px }
+.command-ref-title { color:#9aa0b2; letter-spacing:2px; margin-bottom:8px }
+.command-row { display:flex; gap:16px; margin-bottom:6px }
+.command-code { color:#00ff88; min-width:120px; font-weight:700 }
+.command-desc { color:#c3c3d0 }
+
+/* Animated background layers */
+.app-root { position: relative; overflow: hidden }
+.bg-animated { position: absolute; inset: 0; z-index: 0; pointer-events: none }
+.top-nav, .main-grid, .telemetry-hud, .left-panel, .right-panel { position: relative; z-index: 1 }
+
+.stars {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.75) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 1200px 1200px, 800px 800px, 400px 400px;
+  background-position: 0 0, 200px 400px, 800px 200px;
+  opacity: 0.12;
+  animation: stars-drift 60s linear infinite, stars-twinkle 6s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+.stars::after {
+  content: "";
+  position: absolute; inset: 0; background: radial-gradient(ellipse at 10% 20%, rgba(255,120,80,0.06), transparent 12%), radial-gradient(ellipse at 80% 40%, rgba(160,40,120,0.05), transparent 18%);
+  pointer-events: none;
+}
+
+.nebula {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 15% 25%, rgba(255,120,80,0.05) 0%, transparent 18%), radial-gradient(circle at 80% 40%, rgba(255,194,110,0.04) 0%, transparent 20%);
+  filter: blur(30px) saturate(120%);
+  transform: translateZ(0);
+  animation: nebula-slow 30s linear infinite alternate;
+}
+
+.rover-float {
+  position: absolute; right: 6%; top: 12%; width: 260px; opacity: 0.52; transform-origin: center;
+  z-index: 0; pointer-events: none; filter: drop-shadow(0 10px 30px rgba(2,2,8,0.6));
+  animation: float-y 6s ease-in-out infinite, float-x 16s ease-in-out infinite;
+}
+
+.rover-float.running { animation: float-y 6s ease-in-out infinite, float-x 16s ease-in-out infinite, rover-thrust 1.6s ease-in-out infinite; transform-origin: center; }
+
+@keyframes status-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 6px rgba(0,255,136,0.08); }
+  50% { transform: scale(1.18); box-shadow: 0 0 20px rgba(0,255,136,0.22); }
+  100% { transform: scale(1); box-shadow: 0 0 6px rgba(0,255,136,0.08); }
+}
+
+@keyframes rover-thrust {
+  0% { transform: translateY(0) translateX(0) scale(1); filter: drop-shadow(0 10px 30px rgba(2,2,8,0.6)); }
+  50% { transform: translateY(-6px) translateX(-8px) scale(1.02); filter: drop-shadow(0 18px 40px rgba(2,2,8,0.7)); }
+  100% { transform: translateY(0) translateX(0) scale(1); filter: drop-shadow(0 10px 30px rgba(2,2,8,0.6)); }
+}
+
+@keyframes stars-drift { to { background-position: -1200px -600px, -800px -400px, -400px -200px } }
+@keyframes stars-twinkle { 0%,100% { opacity:0.22 } 50% { opacity:0.32 } }
+@keyframes nebula-slow { from { transform: translateY(-6%) scale(1) } to { transform: translateY(6%) scale(1.05) } }
+@keyframes float-y { 0% { transform: translateY(0) } 50% { transform: translateY(-10px) } 100% { transform: translateY(0) } }
+@keyframes float-x { 0% { transform: translateX(0) } 50% { transform: translateX(-8px) } 100% { transform: translateX(0) } }
+
+/* subtle glass effect for panels */
+.left-panel, .right-panel, .telemetry-hud, .top-nav { backdrop-filter: blur(10px) saturate(125%); }
+
+@media (max-width: 920px) {
+  .app-root {
+    background-position: 58% center;
+    background-attachment: scroll;
+  }
+}
